@@ -21,6 +21,31 @@ pub fn get_base_info() {
 }
 
 #[cfg(target_os = "linux")]
+#[cfg(target_arch = "x86_64")]
 pub fn get_base_info() {
-    println!("{}", "linux")
+    println!("{}", "linux");
+    let mut sys = System::new_all();
+    sys.refresh_all();
+    if System::IS_SUPPORTED {
+        println!("yes");
+    } else {
+        println!("no");
+    }
+    println!("System name:{:?}", sys.name());
+    sys.total_memory();
+}
+
+#[cfg(target_os = "linux")]
+#[cfg(target_arch = "i686")]
+pub fn get_base_info() {
+    println!("{}", "linux x32");
+    let mut sys = System::new_all();
+    sys.refresh_all();
+    if System::IS_SUPPORTED {
+        println!("yes");
+    } else {
+        println!("no");
+    }
+    println!("System name:{:?}", sys.name());
+    sys.total_memory();
 }
