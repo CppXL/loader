@@ -7,32 +7,33 @@ use sysinfo::SystemExt;
 // }
 
 #[cfg(target_os = "windows")]
+#[cfg(target_arch = "x86_64")]
 pub fn get_base_info() {
     let mut sys = System::new_all();
     sys.refresh_all();
+
     if System::IS_SUPPORTED {
-        println!("yes");
+        println!("supper current system");
     } else {
-        println!("no");
+        println!("supper current system");
     }
-    println!("{}", "windows");
     println!("System name:{:?}", sys.name());
-    sys.total_memory();
+    println!("memory:{}", sys.total_memory());
 }
 
 #[cfg(target_os = "linux")]
 #[cfg(target_arch = "x86_64")]
 pub fn get_base_info() {
-    println!("{}", "linux");
     let mut sys = System::new_all();
     sys.refresh_all();
+
     if System::IS_SUPPORTED {
-        println!("yes");
+        println!("supper current system");
     } else {
-        println!("no");
+        println!("unsupper current system");
     }
     println!("System name:{:?}", sys.name());
-    sys.total_memory();
+    println!("memory:{}", sys.total_memory());
 }
 
 #[cfg(target_os = "linux")]
