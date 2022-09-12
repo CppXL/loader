@@ -57,7 +57,7 @@ fn singel(name: String) -> bool {
             CloseHandle(handle);
             return false;
         }
-        info!("success create mutex lock");
+        info!("success create mutex lock ");
     }
     true
 }
