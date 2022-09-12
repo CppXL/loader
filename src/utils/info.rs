@@ -1,3 +1,10 @@
+#[cfg(target_arch = "x86_64")]
+use libloading::Symbol;
+#[cfg(target_arch = "x86_64")]
+use libloading::{library_filename, Library};
+
+use std::ptr;
+
 use sysinfo::System;
 use sysinfo::SystemExt;
 
@@ -18,7 +25,35 @@ pub fn get_base_info() {
         println!("supper current system");
     }
     println!("System name:{:?}", sys.name());
-    println!("memory:{}", sys.total_memory());
+    println!("System version:{:?}", sys.os_version());
+    println!("memory:{} bytes", sys.total_memory());
+    println!("number of cores:{:?}", sys.cpus());
+    println!("networkd:{:?}", sys.networks());
+    println!("cpu info:{:?}", sys.global_cpu_info());
+    println!("kernel version:{:?}", sys.kernel_version());
+    unsafe {
+        let mut size = 0;
+        let retval = advapi32::GetUserNameW(ptr::null_mut(), &mut size);
+
+        assert_eq!(retval, 0, "Should have failed");
+
+        let mut username = Vec::with_capacity(size as usize);
+        let retval = advapi32::GetUserNameW(username.as_mut_ptr(), &mut size);
+        assert_ne!(retval, 0, "Perform better error handling");
+        assert!((size as usize) <= username.capacity());
+        username.set_len(size as usize);
+
+        // Beware: This leaves the trailing NUL character in the final string,
+        // you may want to remove it!
+        println!("running user:{}", String::from_utf16(&username).unwrap());
+    }
+
+    unsafe {
+        let library = Library::new(library_filename("testdll")).unwrap();
+        let add: Symbol<unsafe extern "C" fn(i32, i32) -> i32> = library.get(b"add").unwrap();
+        println!("address of add:{:?}", add.to_owned());
+        println!("result of 1 + 2 = {}", add(1, 2));
+    }
 }
 
 #[cfg(target_os = "linux")]
