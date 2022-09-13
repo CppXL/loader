@@ -1,10 +1,3 @@
-#[cfg(target_arch = "x86_64")]
-use libloading::Symbol;
-#[cfg(target_arch = "x86_64")]
-use libloading::{library_filename, Library};
-
-use std::ptr;
-
 use sysinfo::System;
 use sysinfo::SystemExt;
 
@@ -16,6 +9,10 @@ use sysinfo::SystemExt;
 #[cfg(target_os = "windows")]
 #[cfg(target_arch = "x86_64")]
 pub fn get_base_info() {
+    use libloading::Symbol;
+    use libloading::{library_filename, Library};
+    use std::ptr;
+
     let mut sys = System::new_all();
     sys.refresh_all();
 
