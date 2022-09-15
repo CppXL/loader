@@ -82,3 +82,7 @@ pub fn get_base_info() {
     println!("System name:{:?}", sys.name());
     sys.total_memory();
 }
+
+#[cfg(target_os = "windows")]
+#[cfg(target_arch = "x86_64")]
+pub fn process_list() {}
