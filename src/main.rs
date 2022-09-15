@@ -36,7 +36,6 @@ fn main() {
         let id = getuid();
         println!("uid:{}", id);
     }
-    reg_fs();
 }
 
 /// windows下的互斥锁
@@ -67,17 +66,6 @@ fn single(name: String) -> bool {
         info!("success create mutex lock ");
     }
     true
-}
-
-#[cfg(target_os = "windows")]
-#[cfg(target_arch = "x86_64")]
-fn reg_fs() {
-    unsafe {
-        asm!(
-            "mov eax,large fs:[30h]",
-            out("eax") _,
-        );
-    }
 }
 
 /// Linux下的互斥锁

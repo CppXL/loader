@@ -1,3 +1,4 @@
+use core::arch::asm;
 use sysinfo::System;
 use sysinfo::SystemExt;
 
@@ -50,6 +51,44 @@ pub fn get_base_info() {
         let add: Symbol<unsafe extern "C" fn(i32, i32) -> i32> = library.get(b"add").unwrap();
         println!("address of add:{:?}", add.to_owned());
         println!("result of 1 + 2 = {}", add(1, 2));
+    }
+}
+
+#[cfg(target_os = "windows")]
+#[cfg(target_arch = "x86_64")]
+pub fn get_kernel32_addr() {
+    unsafe {
+        let mut p: i64;
+        asm!(
+            "mov r12, gs:[60h]",
+            "mov r12, [r12 + 0x18]",
+            "mov r12, [r12 + 0x20]",
+            "mov r12, [r12]",
+            "mov r15, [r12 + 0x20]",
+            "mov r12, [r12]",
+            "mov r12, [r12 + 0x20]",
+
+            out("r12") p,
+        );
+        println!("addr:{}", p)
+    }
+}
+
+#[cfg(target_os = "windows")]
+#[cfg(target_arch = "x86")]
+pub fn get_kernel32_addr() {
+    unsafe {
+        let mut p: i32;
+        asm!(
+            "mov eax, fs:[30h]",
+            "mov eax, [eax + 0ch]",
+            "mov eax, [eax + 14h]",
+            "mov eax, [eax]",
+            "mov eax, [eax]",
+            "mov eax, [eax -8h + 18h]",
+            out("eax") p,
+        );
+        println!("addr:{}", p)
     }
 }
 
