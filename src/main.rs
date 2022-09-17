@@ -8,7 +8,7 @@ mod utils;
 use nix::libc::getuid;
 // use nix::unistd::getuid;
 
-use core::arch::asm;
+// use core::arch::asm;
 use std::env::current_dir;
 use utils::*;
 
