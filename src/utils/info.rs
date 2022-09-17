@@ -1,3 +1,4 @@
+#[cfg(target_os = "windows")]
 use core::arch::asm;
 use sysinfo::System;
 use sysinfo::SystemExt;

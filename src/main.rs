@@ -4,6 +4,7 @@ mod utils;
 // extern crate nix;
 // extern crate winapi;
 
+use libc;
 #[cfg(target_os = "linux")]
 use nix::libc::getuid;
 // use nix::unistd::getuid;
@@ -13,15 +14,15 @@ use std::env::current_dir;
 use utils::*;
 
 fn main() {
-    #[cfg(target_os = "windows")]
-    {
-        let name = String::from("Global\\73E21C80-1960-472F-BF0B-3EE7CC7AF17E");
-        if !single(name) {
-            println!("sorry, running");
-            return;
-        }
+    if !single() {
+        println!("sorry, running");
+        return;
     }
 
+    #[cfg(target_os = "linux")]
+    {
+        single();
+    }
     println!(
         "check_in_virtual_machine retn:{}",
         check_in_virtual_machine()
@@ -41,7 +42,7 @@ fn main() {
 /// windows下的互斥锁
 #[cfg(target_os = "windows")]
 #[cfg(target_arch = "x86_64")]
-fn single(name: String) -> bool {
+fn single() -> bool {
     use log::{info, trace};
 
     use std::{ffi::OsStr, iter::once, os::windows::prelude::OsStrExt};
@@ -51,6 +52,7 @@ fn single(name: String) -> bool {
         synchapi::CreateMutexW,
     };
 
+    name = "Global\\73E21C80-1960-472F-BF0B-3EE7CC7AF17E";
     trace!("test trace");
     unsafe {
         let mut mutex_name: Vec<u16> = OsStr::new(&name).encode_wide().chain(once(0)).collect();
@@ -72,5 +74,14 @@ fn single(name: String) -> bool {
 #[cfg(target_os = "linux")]
 #[cfg(target_arch = "x86_64")]
 fn single() -> bool {
+    let singal_name = String::from("gdpRAIbgPS");
+    unsafe {
+        let sem = libc::sem_open(singal_name.as_ptr() as *const libc::c_char, 02 | 0100, 1);
+        println!("sem:{:?}", sem);
+
+        let j = &mut 0;
+        let i = libc::sem_getvalue(sem, j);
+        println!("i:{}\tj:{}", i, j);
+    }
     false
 }
