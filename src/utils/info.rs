@@ -57,7 +57,7 @@ pub fn get_base_info() {
 
 #[cfg(target_os = "windows")]
 #[cfg(target_arch = "x86_64")]
-pub fn get_kernel32_addr() {
+pub fn get_k32_addr() {
     unsafe {
         let mut p: i64;
         asm!(
