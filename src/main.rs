@@ -4,14 +4,31 @@ mod utils;
 // extern crate nix;
 // extern crate winapi;
 
-use libc;
 #[cfg(target_os = "linux")]
-use nix::libc::getuid;
-// use nix::unistd::getuid;
+mod libcs {
+    pub use libc;
+    pub use nix::libc::getuid;
+    // use nix::unistd::getuid;
+}
+#[cfg(target_os = "linux")]
+use libsc::*;
 
 // use core::arch::asm;
 use std::env::current_dir;
+use std::{ffi::OsStr, iter::once, os::windows::prelude::OsStrExt};
 use utils::*;
+
+#[cfg(target_os = "windows")]
+mod winapis {
+    pub use winapi::shared::{minwindef::FALSE, ntdef::NULL, winerror::ERROR_ALREADY_EXISTS};
+    pub use winapi::um::{
+        errhandlingapi::GetLastError, handleapi::CloseHandle, minwinbase::LPSECURITY_ATTRIBUTES,
+        synchapi::CreateMutexW,
+    };
+}
+
+#[cfg(target_os = "windows")]
+use winapis::*;
 
 fn main() {
     if !single() {
@@ -46,14 +63,8 @@ fn single() -> bool {
     use log::{info, trace};
 
     // aa
-    use std::{ffi::OsStr, iter::once, os::windows::prelude::OsStrExt};
-    use winapi::shared::{minwindef::FALSE, ntdef::NULL, winerror::ERROR_ALREADY_EXISTS};
-    use winapi::um::{
-        errhandlingapi::GetLastError, handleapi::CloseHandle, minwinbase::LPSECURITY_ATTRIBUTES,
-        synchapi::CreateMutexW,
-    };
 
-    name = "Global\\73E21C80-1960-472F-BF0B-3EE7CC7AF17E";
+    let name = "Global\\73E21C80-1960-472F-BF0B-3EE7CC7AF17E";
     trace!("test trace");
     unsafe {
         let mut mutex_name: Vec<u16> = OsStr::new(&name).encode_wide().chain(once(0)).collect();
