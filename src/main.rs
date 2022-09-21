@@ -5,21 +5,21 @@ mod utils;
 // extern crate winapi;
 
 #[cfg(target_os = "linux")]
-mod libcs {
+mod linux_lib {
     pub use libc;
     pub use nix::libc::getuid;
     // use nix::unistd::getuid;
 }
 #[cfg(target_os = "linux")]
-use libsc::*;
+use linux_lib::*;
 
 // use core::arch::asm;
 use std::env::current_dir;
-use std::{ffi::OsStr, iter::once, os::windows::prelude::OsStrExt};
 use utils::*;
 
 #[cfg(target_os = "windows")]
-mod winapis {
+mod windows_lib {
+    pub use std::{ffi::OsStr, iter::once, os::windows::prelude::OsStrExt};
     pub use winapi::shared::{minwindef::FALSE, ntdef::NULL, winerror::ERROR_ALREADY_EXISTS};
     pub use winapi::um::{
         errhandlingapi::GetLastError, handleapi::CloseHandle, minwinbase::LPSECURITY_ATTRIBUTES,
@@ -28,7 +28,7 @@ mod winapis {
 }
 
 #[cfg(target_os = "windows")]
-use winapis::*;
+use windows_lib::*;
 
 fn main() {
     if !single() {
@@ -82,14 +82,14 @@ fn single() -> bool {
 #[cfg(target_os = "linux")]
 #[cfg(target_arch = "x86_64")]
 fn single() -> bool {
-    let singal_name = String::from("gdpRAIbgPS");
+    let mut singal_name = String::from("gdpRAIbgPS");
     unsafe {
-        let sem = libc::sem_open(singal_name.as_ptr() as *const libc::c_char, 02 | 0100, 1);
-        println!("sem:{:?}", *sem);
-        // let mut m = 0;
-        // let j = &mut m;
-        // let i = libc::sem_getvalue(sem, j);
-        // println!("i:{}\tj:{}", i, j);
+        let sem = libc::sem_open(singal_name.as_mut_ptr() as *const libc::c_char, 66, 0666, 1);
+        println!("sem:{:?}", (*sem));
+        let mut m = 0;
+        let j = &mut m;
+        let i = libc::sem_getvalue(sem, j);
+        println!("i:{}\tj:{}", i, *j);
     }
     false
 }
