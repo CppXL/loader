@@ -19,10 +19,6 @@ fn main() {
         return;
     }
 
-    #[cfg(target_os = "linux")]
-    {
-        single();
-    }
     println!(
         "check_in_virtual_machine retn:{}",
         check_in_virtual_machine()
@@ -53,7 +49,7 @@ fn single() -> bool {
         synchapi::CreateMutexW,
     };
 
-    name = "Global\\73E21C80-1960-472F-BF0B-3EE7CC7AF17E";
+    letname = "Global\\73E21C80-1960-472F-BF0B-3EE7CC7AF17E";
     trace!("test trace");
     unsafe {
         let mut mutex_name: Vec<u16> = OsStr::new(&name).encode_wide().chain(once(0)).collect();
@@ -78,11 +74,11 @@ fn single() -> bool {
     let singal_name = String::from("gdpRAIbgPS");
     unsafe {
         let sem = libc::sem_open(singal_name.as_ptr() as *const libc::c_char, 02 | 0100, 1);
-        println!("sem:{:?}", sem);
-
-        let j = &mut 0;
-        let i = libc::sem_getvalue(sem, j);
-        println!("i:{}\tj:{}", i, j);
+        println!("sem:{:?}", *sem);
+        // let mut m = 0;
+        // let j = &mut m;
+        // let i = libc::sem_getvalue(sem, j);
+        // println!("i:{}\tj:{}", i, j);
     }
     false
 }
