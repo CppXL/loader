@@ -4,6 +4,10 @@ mod utils;
 // extern crate nix;
 // extern crate winapi;
 
+// use core::arch::asm;
+use log::{info, trace};
+use std::env::current_dir;
+use utils::*;
 #[cfg(target_os = "linux")]
 mod linux_lib {
     pub use libc;
@@ -12,10 +16,6 @@ mod linux_lib {
 }
 #[cfg(target_os = "linux")]
 use linux_lib::*;
-
-// use core::arch::asm;
-use std::env::current_dir;
-use utils::*;
 
 #[cfg(target_os = "windows")]
 mod windows_lib {
@@ -56,10 +56,6 @@ fn main() {
 #[cfg(target_os = "windows")]
 #[cfg(target_arch = "x86_64")]
 fn single() -> bool {
-    use log::{info, trace};
-
-    // aa
-
     let name = "Global\\73E21C80-1960-472F-BF0B-3EE7CC7AF17E";
     trace!("test trace");
     unsafe {
